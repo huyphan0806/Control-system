@@ -11,7 +11,7 @@ Hệ thống điều khiển và giám sát máy tính từ xa thông qua Web Da
 
 ---
 
-**HƯỚNG DẪN SỬ DỤNG**
+**HƯỚNG DẪN**
 
 **1. Phía Server (Máy bị điều khiển)**
 
